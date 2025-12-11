@@ -1,0 +1,120 @@
+Project zaip_ai_schema {
+  database_type: 'PostgreSQL'
+  Note: 'Open Source Schema (Single-tenant)'
+}
+
+Table zaip_contacts {
+  _id_contact bigint [pk, increment]
+  date_created timestamp [default: `now()`]
+  date_updated timestamp
+  name text
+  email text
+  phone_complete text
+  ddd text
+  ddi text
+  status text [default: 'ativo']
+  phone text
+  gender text
+  date_birthday date
+  step_process_contact text [default: '1 - Contato Ativo']
+  company_name text
+  company_area text
+}
+
+Table zaip_conversations {
+  _id_conversation bigint [pk, increment]
+  _id_contact bigint
+  date_created timestamp [default: `now()`]
+  date_updated timestamp
+  status text [default: 'ativo']
+  last_question text
+  last_response text
+  step_process text [default: '1 - Atendimento Iniciado']
+  openai_conversation_id text
+  current_step bigint [default: 1]
+  state_process jsonb
+  script_name_last_used text
+}
+
+Table zaip_messages {
+  _id_message bigint [pk, increment]
+  date_time timestamp [default: `now()`]
+  _id_group_message bigint
+  _id_conversation bigint
+  _id_contact bigint
+  type text
+  message text
+  ai_gpt_model text
+  ai_audio_model text
+  ai_audio_response text
+  tokens_total_used bigint
+  tokens_input_used bigint
+  tokens_output_used bigint
+  tokens_cached_used bigint
+  tokens_reasoning_used bigint
+}
+
+Table log_contact_activities {
+  _id_contact_activity bigint [pk, increment]
+  date_created timestamp [not null, default: `now()`]
+  activity_type text
+  activity_title text
+  status text [default: 'ativo']
+  activity_describe text
+  _id_contact bigint
+  _id_conversation bigint
+}
+
+Table log_meta_whebhook {
+  _id_log_meta_whebhook bigint [pk, increment]
+  date_created timestamp [not null, default: `now()`]
+  json jsonb
+  type text
+  wa_id text
+  phone_number_id text
+  business_id text
+  phone_number text
+  message text
+  "from" text
+  message_template_id text
+}
+
+Table log_openai_requests {
+  _id_log_openai_requests bigint [pk, increment]
+  date_created timestamp [not null, default: `now()`]
+  type text
+  json jsonb
+  _id_contact bigint
+  _id_conversation bigint
+  tokens_total_used bigint
+  tokens_input_used bigint
+  tokens_output_used bigint
+  tokens_cached_used bigint
+  tokens_reasoning_used bigint
+  usage_type text
+  ai_model text
+  tokens_audio_used bigint
+}
+
+Table log_results {
+  _id_log_results bigint [pk, increment]
+  date_created timestamp [not null, default: `now()`]
+  type text
+  json jsonb
+  _id_contact bigint
+  _id_conversation bigint
+  _id_group_message bigint
+  status text
+  input text
+  output text
+  reason text
+  slots text
+  script_name_last_used text
+}
+
+// Relationships
+Ref: zaip_conversations._id_contact > zaip_contacts._id_contact
+Ref: zaip_messages._id_contact > zaip_contacts._id_contact
+Ref: zaip_messages._id_conversation > zaip_conversations._id_conversation
+Ref: log_contact_activities._id_contact > zaip_contacts._id_contact
+Ref: log_contact_activities._id_conversation > zaip_conversations._id_conversation

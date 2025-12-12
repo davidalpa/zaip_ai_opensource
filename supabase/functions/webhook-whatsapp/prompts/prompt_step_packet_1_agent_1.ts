@@ -14,7 +14,6 @@ export const PROMPT_STEP_PACKET_1_AGENT_1 = `
 - STOP_SCRIPT = false
 - END_SCRIPT = false
 
-
 ## STEP_SCRIPTS
 - START_SCRIPT (Primeira Interação):
   - Olá, tudo bom?

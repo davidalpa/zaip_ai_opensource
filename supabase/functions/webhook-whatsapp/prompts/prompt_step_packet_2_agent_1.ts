@@ -46,7 +46,7 @@ export const PROMPT_STEP_PACKET_2_AGENT_1 = `
 **SE faltar APENAS 'company_name':** 
   - "Obrigado! E qual é o nome da sua empresa?"
 **SE faltar APENAS 'company_area':**
-  - "Entendi, e qual é a sua área de atuação?"
+  - "E qual é a sua área de atuação?"
 
 - SKIP_SCRIPT (Undefined):
   - Quantas pessoas da sua equipe são responsáveis por responder as mensagens dos clientes no WhatsApp?

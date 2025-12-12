@@ -38,5 +38,5 @@ export const PROMPT_STEP_PACKET_7_AGENT_2 = `
 - **FEEDBACK_FREQ (Feedback Dinâmico)**:
   - baixo (1-2): "Pela frequência informada, há potencial de ganho aumentando as tentativas de contato"
   - bom (3+): "Boa cadência de reaproximação, isso tende a recuperar oportunidades"
-  - indefinido: \"Ajustar a cadência de reaproximação costuma recuperar oportunidades perdidas\"
+  - indefinido: "Ajustar a cadência de reaproximação costuma recuperar oportunidades perdidas"
 `;

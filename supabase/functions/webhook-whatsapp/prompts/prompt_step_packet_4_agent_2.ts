@@ -16,7 +16,7 @@ export const PROMPT_STEP_PACKET_4_AGENT_2 = `
 ## STEP_SCRIPTS
 - SUCCESS_SCRIPT (Sucesso):
   - ${STORAGE_PUBLIC_URL}send/sticker/crm_update_estagio_3.webp
-  - Entendo, me conta mais detalhes de como funciona o seu atendimento pelo WhatsApp hoje?
+  - Me conta mais detalhes de como funciona o seu atendimento pelo WhatsApp hoje?
   - Se preferir, pode mandar um áudio!
 
 - SKIP_SCRIPT (Indefinido):

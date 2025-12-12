@@ -63,7 +63,7 @@ export const PROMPT_STEP_PACKET_12_AGENT_3 = `
   - Se a sua operação evoluir ou o contexto mudar, posso te ajudar a revisitar essa decisão no futuro
 
 - RETRY_SCRIPTS (Se closing_response = duvida ou caro):
-  - Entendo, hoje qual é a principal dúvida que te impede de seguir com a Zaip, resultado, rotina do time ou orçamento?
+  - Hoje qual é a principal dúvida que te impede de seguir com a Zaip, resultado, rotina do time ou orçamento?
 
 ## EXTRACTION_RULES
 - **closing_response**:

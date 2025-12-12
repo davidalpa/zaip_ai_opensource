@@ -37,7 +37,7 @@ export const PROMPT_STEP_PACKET_3_AGENT_1 = `
 ## STEP_SCRIPTS
 - SUCCESS_SCRIPT (Sucesso - Slots preenchidos e pre_qualified_lead = true):
   - ${STORAGE_PUBLIC_URL}send/image/agente2.png
-  - Entendi, gostaria de uma opinião sincera
+  - Gostaria de uma opinião sincera
   - Você considera que conseguem atender todas as mensagens no WhatsApp com a agilidade e assertividade que seus clientes esperam?
 
 - RETRY_SCRIPT (Erro/Falta - Use ONLY if 'company_employees' is NULL):

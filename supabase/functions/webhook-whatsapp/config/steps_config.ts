@@ -1,20 +1,20 @@
 // Map step -> process prompt (markdown)
 // Map Step -> Prompt File
 // Import Prompts
-import { PROMPT_STEP_PACKET_1_AGENT_1 } from "../prompts/prompt_step_packet_1_agent_1.ts";
-import { PROMPT_STEP_PACKET_2_AGENT_1 } from "../prompts/prompt_step_packet_2_agent_1.ts";
-import { PROMPT_STEP_PACKET_3_AGENT_1 } from "../prompts/prompt_step_packet_3_agent_1.ts";
-import { PROMPT_STEP_PACKET_4_AGENT_2 } from "../prompts/prompt_step_packet_4_agent_2.ts";
-import { PROMPT_STEP_PACKET_5_AGENT_2 } from "../prompts/prompt_step_packet_5_agent_2.ts";
-import { PROMPT_STEP_PACKET_6_AGENT_2 } from "../prompts/prompt_step_packet_6_agent_2.ts";
-import { PROMPT_STEP_PACKET_7_AGENT_2 } from "../prompts/prompt_step_packet_7_agent_2.ts";
-import { PROMPT_STEP_PACKET_8_AGENT_2 } from "../prompts/prompt_step_packet_8_agent_2.ts";
-import { PROMPT_STEP_PACKET_9_AGENT_2 } from "../prompts/prompt_step_packet_9_agent_2.ts";
-import { PROMPT_STEP_PACKET_10_AGENT_2 } from "../prompts/prompt_step_packet_10_agent_2.ts";
-import { PROMPT_STEP_PACKET_11_AGENT_3 } from "../prompts/prompt_step_packet_11_agent_3.ts";
-import { PROMPT_STEP_PACKET_12_AGENT_3 } from "../prompts/prompt_step_packet_12_agent_3.ts";
-import { PROMPT_STEP_PACKET_13_AGENT_3 } from "../prompts/prompt_step_packet_13_agent_3.ts";
-import { PROMPT_STEP_PACKET_14_AGENT_3 } from "../prompts/prompt_step_packet_14_agent_3.ts";
+import { PROMPT_STEP_PACKET_1_AGENT_1 } from "../prompts/system_prompt_step_packet_1_agent_1.ts";
+import { PROMPT_STEP_PACKET_2_AGENT_1 } from "../prompts/system_prompt_step_packet_2_agent_1.ts";
+import { PROMPT_STEP_PACKET_3_AGENT_1 } from "../prompts/system_prompt_step_packet_3_agent_1.ts";
+import { PROMPT_STEP_PACKET_4_AGENT_2 } from "../prompts/system_prompt_step_packet_4_agent_2.ts";
+import { PROMPT_STEP_PACKET_5_AGENT_2 } from "../prompts/system_prompt_step_packet_5_agent_2.ts";
+import { PROMPT_STEP_PACKET_6_AGENT_2 } from "../prompts/system_prompt_step_packet_6_agent_2.ts";
+import { PROMPT_STEP_PACKET_7_AGENT_2 } from "../prompts/system_prompt_step_packet_7_agent_2.ts";
+import { PROMPT_STEP_PACKET_8_AGENT_2 } from "../prompts/system_prompt_step_packet_8_agent_2.ts";
+import { PROMPT_STEP_PACKET_9_AGENT_2 } from "../prompts/system_prompt_step_packet_9_agent_2.ts";
+import { PROMPT_STEP_PACKET_10_AGENT_2 } from "../prompts/system_prompt_step_packet_10_agent_2.ts";
+import { PROMPT_STEP_PACKET_11_AGENT_3 } from "../prompts/system_prompt_step_packet_11_agent_3.ts";
+import { PROMPT_STEP_PACKET_12_AGENT_3 } from "../prompts/system_prompt_step_packet_12_agent_3.ts";
+import { PROMPT_STEP_PACKET_13_AGENT_3 } from "../prompts/system_prompt_step_packet_13_agent_3.ts";
+import { PROMPT_STEP_PACKET_14_AGENT_3 } from "../prompts/system_prompt_step_packet_14_agent_3.ts";
 import { PROMPT_INSTRUCTIONS_AGENT_1 } from "../prompts/prompt_instructions_agent_1.ts";
 import { PROMPT_INSTRUCTIONS_AGENT_2 } from "../prompts/prompt_instructions_agent_2.ts";
 import { PROMPT_INSTRUCTIONS_AGENT_3 } from "../prompts/prompt_instructions_agent_3.ts";

@@ -62,7 +62,12 @@ export interface FlowContext {
     openai_apikey?: string;
     state_process?: string;
     script_name_last_used?: string;
+    // IMPORTANT: added for compatibility with prompt files
+    inbox_whatsapp_number?: string;
 }
+
+// Alias for compatibility with Prompt Files that use ViewMainFlowSummary
+export type ViewMainFlowSummary = FlowContext;
 
 export interface IdentificationResult {
     senderNumber: string;

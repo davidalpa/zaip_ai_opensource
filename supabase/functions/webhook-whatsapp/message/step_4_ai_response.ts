@@ -7,6 +7,7 @@ import { insertOpenAIRequest } from "../database_queries/sql_inserts.ts";
 import { updateContactName, updateCompanyNameAndArea, updatePipelineStage, updateStepConversation } from "../database_queries/sql_tools_updates.ts";
 import { getProcessPrompt, getPipelineStage } from "../config/steps_config.ts";
 import { AgentConfig } from "../config/agent_config.ts";
+import { langfuse } from "../index.ts";
 
 
 // fetchProcessData removed (replaced by getProcessPrompt config usage)
@@ -45,9 +46,25 @@ export async function executeAiFlow(
     const supabase = state.supabase;
     const mcpToken = state.conf.tokens.mcp;
 
-
-    // 1. Fetch Process Data (configuration file)
+    // 1. Fetch Process Data (configuration file) - MOVED UP
     const currentStep = Number(summary.current_step || 1); // FORCE NUMBER TYPE
+
+    // 1. CRIAÇÃO DO TRACE (Langfuse)
+    const trace = langfuse.trace({
+        id: `trace_${conversationId}_${Date.now()}`,
+        name: "Webhook AI Flow",
+        sessionId: conversationId,
+        userId: summary._id_contact || "unknown_contact",
+        metadata: {
+            step: currentStep,
+            contact_phone: senderNumber,
+            event_type: state.data.eventType
+        },
+        input: messageBody, // <--- CRÍTICO: Input do usuário
+        tags: ["production", "webhook", state.data.eventType]
+    });
+
+
     const stepPrompt = summary.process_prompt || getProcessPrompt(currentStep) || "";
     const processData = stepPrompt ? { process_prompt: stepPrompt, process_step_number: currentStep } : null;
 
@@ -75,8 +92,22 @@ export async function executeAiFlow(
     let rawResponse = null;
     let debugInfo = null;
 
+    // Declare generation outside try for error handling access
+    let generation: any = null;
+
     try {
         // Removed explicit ai_api_request pending here to control order inside onBeforeRequest
+
+        // 2. INÍCIO DA GERAÇÃO (Main)
+        generation = trace.generation({
+            name: `Attempt 1 (Main)`,
+            model: summary.ai_gpt_model,
+            modelParameters: {
+                temperature: summary.openai_temperature
+            },
+            input: "Generating...", // Placeholder, updated in onBeforeRequest
+            startTime: new Date()
+        });
 
         const llmResult = await callZaipLLM({
             input: messageBody,
@@ -88,6 +119,13 @@ export async function executeAiFlow(
             systemMessage: system_prompt,
             temperature: summary.openai_temperature,
             onBeforeRequest: async (requestBody) => {
+                // UPDATE GENERATION INPUT
+                if (generation) {
+                    generation.update({
+                        input: requestBody
+                    });
+                }
+
                 // LOG INPUT (Before Request)
                 const err = await insertOpenAIRequest(supabase, {
                     type: "INPUT",
@@ -111,6 +149,23 @@ export async function executeAiFlow(
 
         logStep("ai_api_request", "success");
 
+        // 3. FIM DA GERAÇÃO (Success)
+        const usage = (rawResponse as any)?.usage || {};
+        if (generation) {
+            generation.end({
+                output: aiResponseText, // <--- CRÍTICO: Apenas texto
+                usageDetails: {
+                    input: usage.prompt_tokens || 0,
+                    output: usage.completion_tokens || 0,
+                    total: usage.total_tokens || 0
+                },
+                endTime: new Date()
+            });
+        }
+
+        // Update Trace output
+        trace.update({ output: aiResponseText });
+
         // LOG OUTPUT (After Response)
         if (rawResponse) {
             const err = await insertOpenAIRequest(supabase, {
@@ -127,7 +182,23 @@ export async function executeAiFlow(
         }
 
     } catch (error) {
+        // FIM DA GERAÇÃO (Erro)
+        if (generation) {
+            generation.end({
+                statusMessage: (error as any).message || String(error),
+                level: "ERROR",
+                endTime: new Date()
+            });
+        }
+        trace.update({ level: "ERROR", statusMessage: (error as any).message || String(error) });
+
         errors.push({ step: "ai_call_openai", error: `Error calling OpenAI API: ${(error as any).message || error}` });
+
+        // FIM DA GERAÇÃO (Erro) - capture generation from scope corresponding to try block?
+        // Limitation: 'generation' const is block scoped. I need to move declaration up if I want to use it in catch.
+        // Or simply suppress error here since I can't access 'generation' variable easily if defined inside try.
+        // WAIT. If I define it inside try, I can't access it in catch.
+        // I will redefine the structure slightly to declare let generation; before try.
 
         // Try to save error to OpenAI log table for debug
         try {
@@ -235,6 +306,15 @@ export async function executeAiFlow(
                         logStep("mcp_tool_execution", "success", { tool: toolName, output_preview: toolOutput.substring(0, 100) });
 
                         // Recursive call to get the final answer
+
+                        // 2. INÍCIO DA GERAÇÃO (Tool Follow-up)
+                        const generationTool = trace.generation({
+                            name: `Attempt 1 (Tool Follow-up)`,
+                            model: summary.ai_gpt_model,
+                            input: "Tool Result Input", // Updated in hook
+                            startTime: new Date()
+                        });
+
                         const retryResult = await callZaipLLM({
                             input: "Continue generating the response based on the tool result.",
                             conversation: openaiConversationId,
@@ -243,12 +323,29 @@ export async function executeAiFlow(
                             model: summary.ai_gpt_model,
                             instructions: instructions,
                             systemMessage: system_prompt,
-                            temperature: summary.openai_temperature
+                            temperature: summary.openai_temperature,
+                            onBeforeRequest: async (reqBody) => {
+                                generationTool.update({ input: reqBody });
+                            }
                         });
 
                         aiResponseText = retryResult.outputText || "";
                         rawResponse = retryResult.raw;
                         debugInfo = retryResult.debugInfo;
+
+                        // 3. FIM DA GERAÇÃO (Tool Success)
+                        const usageTool = (rawResponse as any)?.usage || {};
+                        generationTool.end({
+                            output: aiResponseText,
+                            usageDetails: {
+                                input: usageTool.prompt_tokens || 0,
+                                output: usageTool.completion_tokens || 0,
+                                total: usageTool.total_tokens || 0
+                            },
+                            endTime: new Date()
+                        });
+
+                        trace.update({ output: aiResponseText }); // Update trace with *final* text
 
                         logStep("ai_api_request_retry", "success");
                     }

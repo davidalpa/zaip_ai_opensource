@@ -4,6 +4,16 @@ import { identifyEventType, routeIncomingEvent } from "./event_router.ts";
 import { FlowState, StepLog } from "./types/type_flow.ts";
 import { insertWebhookResultLog } from "./database_queries/sql_inserts.ts";
 import { AgentConfig } from "./config/agent_config.ts";
+import { Langfuse } from "npm:langfuse";
+
+export const langfuse = new Langfuse({
+    publicKey: Deno.env.get("LANGFUSE_PUBLIC_KEY"),
+    secretKey: Deno.env.get("LANGFUSE_SECRET_KEY"),
+    baseUrl: Deno.env.get("LANGFUSE_BASE_URL"),
+    flushAt: 1,
+    release: "v1.0", // ou versão do seu app
+    environment: "production"
+});
 
 // =================================================================
 // WEBHOOK AND API CONFIGURATION
@@ -266,6 +276,9 @@ Deno.serve(async (req: Request) => {
 
             // Explicit cleanup
             (state as any) = null;
+
+            // Langfuse Flush
+            await langfuse.flushAsync();
         }
     };
 

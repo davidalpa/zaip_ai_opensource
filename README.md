@@ -3,9 +3,10 @@
 A production-grade serverless backend to build **AI-powered WhatsApp sales funnels**, running on:
 
 - 📱 Meta WhatsApp Cloud API (real-time events & messaging)
-- 🗄️ Supabase (Database • Storage • Edge Functions • Deno Runtime)
-- 🧠 OpenAI API Responses (GPT-5 Mini / GPT-4o Mini, low cost, low latency)
+- 🧠 Context Engineering (OpenAI GPT-5 Mini / GPT-4o Mini, low cost, low latency)
 - 🧩 MCP + RAG (Model Context Protocol + Supabase Vector with pgvector)
+- 👁️ LangFuse (AI Observability)
+- 🗄️ Supabase (Database • Storage • Edge Functions • Deno Runtime)
 
 This repo exposes the main Edge Function **`zaip_ai_opensource`**, responsible for processing every WhatsApp message and orchestrating:
 
@@ -226,6 +227,21 @@ Response: 4xx / 5xx.
 * Status webhook error
 
 Flow continues and the user receives the message normally.
+
+---
+
+## 👁️ Observability (Langfuse)
+
+The project includes native integration with **Langfuse** for full AI traceability.
+
+*   **Traces**: Each execution (Trace) maps to a user interaction.
+*   **Generations**: Tracks every LLM call (Main flow, Tool calls, Retries).
+*   **Metrics**: Token usage, latency, and costs per execution.
+*   **Clean Logs**:
+    *   **Input**: Full user message + context.
+    *   **Output**: Only the final text response (JSON metadata stripped).
+
+> **Note**: Observability is critical for debugging "black box" AI behavior in production.
 
 ---
 
